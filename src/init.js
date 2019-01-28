@@ -1,3 +1,6 @@
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Example from './Example';
 
 export default () => {
