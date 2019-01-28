@@ -22,7 +22,4 @@ module.exports = {
       template: 'template.html',
     }),
   ],
-  devServer: {
-    contentBase: './dist',
-  },
 };
