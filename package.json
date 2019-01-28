@@ -1,5 +1,5 @@
 {
-  "name": "webpack-package",
+  "name": "hexlet-rss-reader-by-vbwdev",
   "version": "0.0.1",
   "description": "",
   "scripts": {
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hexlet-boilerplates/webpack-package.git"
+    "url": "git+https://github.com/vbwdev/project-lvl3-s390.git"
   },
   "author": "Kirill Mokevnin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hexlet-boilerplates/webpack-package/issues"
+    "url": "https://github.com/vbwdev/project-lvl3-s390/issues"
   },
-  "homepage": "https://github.com/hexlet-boilerplates/webpack-package#readme",
+  "homepage": "https://github.com/vbwdev/project-lvl3-s390#readme",
   "jest": {
     "verbose": true,
     "testURL": "http://localhost/"
