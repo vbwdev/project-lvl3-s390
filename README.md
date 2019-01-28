@@ -1,8 +1,8 @@
 # RSS Reader (Hexlet training project)
 
-[![Code Climate](https://codeclimate.com/github/hexlet-boilerplates/webpack-package/badges/gpa.svg)](https://codeclimate.com/github/hexlet-boilerplates/webpack-package)
-[![Issue Count](https://codeclimate.com/github/hexlet-boilerplates/webpack-package/badges/issue_count.svg)](https://codeclimate.com/github/hexlet-boilerplates/webpack-package)
-[![Build Status](https://travis-ci.org/hexlet-boilerplates/webpack-package.svg?branch=master)](https://travis-ci.org/hexlet-boilerplates/webpack-package)
+[![Code Climate](https://codeclimate.com/github/vbwdev/project-lvl3-s390/badges/gpa.svg)](https://codeclimate.com/github/vbwdev/project-lvl3-s390)
+[![Issue Count](https://codeclimate.com/github/vbwdev/project-lvl3-s390/badges/issue_count.svg)](https://codeclimate.com/github/vbwdev/project-lvl3-s390)
+[![Build Status](https://travis-ci.org/vbwdev/project-lvl3-s390.svg?branch=master)](https://travis-ci.org/vbwdev/project-lvl3-s390)
 
 ## Setup
 
