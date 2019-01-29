@@ -11,27 +11,24 @@ const { watch } = WatchJS;
 export default () => {
   const state = {
     addUrlForm: {
-      isUrlValid: null,
+      hasUrlError: false,
+      canSubscribe: false,
     },
   };
 
   const rssUrlInput = document.querySelector('.js-rss-url-input');
-  // const rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
+  const rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
 
   rssUrlInput.addEventListener('input', (e) => {
     const { value } = e.target;
-    const isValid = isUrl(value);
-    if (isValid) {
-      state.addUrlForm.isUrlValid = true;
-      state.canSubmit = true;
-    } else {
-      state.addUrlForm.isUrlValid = false;
-      state.canSubmit = false;
-    }
+    const isInputEmpty = value === '';
+    const isUrlValid = isUrl(value);
+    state.addUrlForm.hasUrlError = !isInputEmpty && !isUrlValid;
+    state.addUrlForm.canSubscribe = !isInputEmpty && isUrlValid;
   });
 
-  watch(state.addUrlForm, ['isUrlValid', 'canSubmit'], () => {
-    rssUrlInput.classList.toggle('is-invalid', !state.addUrlForm.isUrlValid);
-    rssUrlInput.classList.toggle('is-valid', state.addUrlForm.isUrlValid);
+  watch(state.addUrlForm, ['hasUrlError', 'canSubscribe'], () => {
+    rssUrlInput.classList.toggle('is-invalid', state.addUrlForm.hasUrlError);
+    rssUrlSubmitButton.disabled = !state.addUrlForm.canSubscribe;
   });
 };
