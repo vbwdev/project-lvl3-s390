@@ -4,6 +4,7 @@ plugins:
   - flowtype
   - jest
   - babel
+  - prettier
 
 env:
   node: true
@@ -16,6 +17,8 @@ extends:
   - 'airbnb-base'
   - 'plugin:jest/recommended'
   - 'plugin:flowtype/recommended'
+  - 'prettier'
 
 rules:
   no-console: 0
+  prettier/prettier: 'error'
