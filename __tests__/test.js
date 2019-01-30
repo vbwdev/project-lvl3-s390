@@ -27,6 +27,7 @@ const readFile = promisify(fs.readFile);
 
 
 describe('rss reader', () => {
+  let rssUrlForm;
   let rssUrlInput;
   let rssUrlSubmitButton;
 
@@ -36,6 +37,7 @@ describe('rss reader', () => {
     init();
     rssUrlInput = document.querySelector('.js-rss-url-input');
     rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
+    rssUrlForm = document.querySelector('.js-rss-url-form');
   });
 
   test('should init without changes', () => {
@@ -72,4 +74,22 @@ describe('rss reader', () => {
       done();
     }, 0);
   });
+
+  test('should not add duplicates url', (done) => {
+    rssUrlInput.focus();
+    pressKey('m', rssUrlInput, 'test.com');
+    pressKey('Enter', rssUrlInput, 'test.com');
+    rssUrlSubmitButton.click();
+
+    rssUrlInput.focus();
+    pressKey('m', rssUrlInput, 'test.com');
+
+    setTimeout(() => {
+      expect(rssUrlInput.classList.contains('is-invalid')).toBe(true);
+      expect(rssUrlSubmitButton.disabled).toBe(true);
+      done();
+    }, 0);
+  });
+
+
 });
