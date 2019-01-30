@@ -23,6 +23,8 @@ export default () => {
   const rssUrlForm = document.querySelector('.js-rss-url-form');
   const rssUrlInput = document.querySelector('.js-rss-url-input');
   const rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
+  const channelsList = document.querySelector('.js-rss-channels-list');
+  const articlesList = document.querySelector('.js-rss-articles-list');
 
   rssUrlInput.addEventListener('input', e => {
     const { value: url } = e.target;
@@ -92,10 +94,45 @@ export default () => {
   });
 
   watch(state, 'channels', () => {
+    if (state.channels.length === 0) {
+      const el = document.createElement('li');
+      el.classList.add('list-group-item');
+      el.textContent = 'No channels';
+      channelsList.innerHTML = el;
+    } else {
+      const els = state.channels.map(({ title, description }) => {
+        const el = document.createElement('li');
+        el.classList.add('list-group-item');
+        el.textContent = `${title} --- ${description}`;
+        console.log(el);
+        return el.outerHTML;
+      });
+      console.log(els);
+      channelsList.innerHTML = els.join('');
+    }
     console.log('channels was updated', state.channels);
   });
 
   watch(state, 'articles', () => {
+    if (state.articles.length === 0) {
+      const el = document.createElement('div');
+      el.classList.add('list-group-item');
+      el.textContent = 'No articles';
+      articlesList.innerHTML = el;
+    } else {
+      const els = state.articles.map(({ title, link }) => {
+        const el = document.createElement('a');
+        el.classList.add('list-group-item');
+        el.classList.add('list-group-item-action');
+        el.target = '_blank';
+        el.href = link;
+        el.textContent = title;
+        console.log(el);
+        return el.outerHTML;
+      });
+      console.log(els);
+      articlesList.innerHTML = els.join('');
+    }
     console.log('articles was updated', state.articles);
   });
 };
