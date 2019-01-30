@@ -23,11 +23,16 @@ export default () => {
 
   rssUrlInput.addEventListener('input', (e) => {
     const { value: url } = e.target;
-    const isInputEmpty = url === '';
-    const isUrlValid = isUrl(url);
-    const isDuplicateUrl = state.rssUrls.includes(url);
-    state.addUrlForm.hasUrlError = !isInputEmpty && !isUrlValid || isDuplicateUrl;
-    state.addUrlForm.canSubscribe = !isInputEmpty && isUrlValid && !isDuplicateUrl;
+    if (url === '') {
+      state.addUrlForm.hasUrlError = false;
+      state.addUrlForm.canSubscribe = false;
+    } else if (!isUrl(url) || state.rssUrls.includes(url)) {
+      state.addUrlForm.hasUrlError = true;
+      state.addUrlForm.canSubscribe = false;
+    } else {
+      state.addUrlForm.hasUrlError = false;
+      state.addUrlForm.canSubscribe = true;
+    }
   });
 
   rssUrlForm.addEventListener('submit', (e) => {
