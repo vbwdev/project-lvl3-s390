@@ -25,9 +25,8 @@ const pressKey = (key, el = document.body, value = key) => {
 
 const readFile = promisify(fs.readFile);
 
-
 describe('rss reader', () => {
-  let rssUrlForm;
+  // let rssUrlForm;
   let rssUrlInput;
   let rssUrlSubmitButton;
 
@@ -37,14 +36,14 @@ describe('rss reader', () => {
     init();
     rssUrlInput = document.querySelector('.js-rss-url-input');
     rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
-    rssUrlForm = document.querySelector('.js-rss-url-form');
+    // rssUrlForm = document.querySelector('.js-rss-url-form');
   });
 
   test('should init without changes', () => {
     expect(getTree()).toMatchSnapshot();
   });
 
-  test('should validate rss url input with wrong url', (done) => {
+  test('should validate rss url input with wrong url', done => {
     rssUrlInput.focus();
     pressKey('l', rssUrlInput, 'wrong-url');
     setTimeout(() => {
@@ -54,7 +53,7 @@ describe('rss reader', () => {
     }, 0);
   });
 
-  test('should validate rss url input with good url', (done) => {
+  test('should validate rss url input with good url', done => {
     rssUrlInput.focus();
     pressKey('m', rssUrlInput, 'https://good-url.com');
     setTimeout(() => {
@@ -64,7 +63,7 @@ describe('rss reader', () => {
     }, 0);
   });
 
-  test('should remove error class from empty input', (done) => {
+  test('should remove error class from empty input', done => {
     rssUrlInput.focus();
     pressKey('t', rssUrlInput);
     pressKey('Backspace', rssUrlInput, '');
@@ -75,7 +74,7 @@ describe('rss reader', () => {
     }, 0);
   });
 
-  test('should not add duplicates url', (done) => {
+  test('should not add duplicates url', done => {
     rssUrlInput.focus();
     pressKey('m', rssUrlInput, 'test.com');
     pressKey('Enter', rssUrlInput, 'test.com');
@@ -90,6 +89,4 @@ describe('rss reader', () => {
       done();
     }, 0);
   });
-
-
 });

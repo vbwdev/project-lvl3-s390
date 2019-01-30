@@ -55,7 +55,7 @@ export default () => {
       return axios.get(`https://cors-anywhere.herokuapp.com/${rssUrl}`);
     });
 
-    Promise.all(rssUrls)
+    return Promise.all(rssUrls)
       .then(channelsRowData => {
         return channelsRowData.map(({ data: channelRowData }) =>
           new DOMParser().parseFromString(channelRowData, 'application/xml'),
@@ -85,7 +85,6 @@ export default () => {
         state.channels = channelsData;
         state.articles = itemsData;
       });
-
   });
 
   watch(state.addUrlForm, ['hasUrlError', 'canSubscribe'], () => {
