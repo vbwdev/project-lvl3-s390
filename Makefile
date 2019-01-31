@@ -23,6 +23,7 @@ lint:
 	npx eslint .
 
 publish:
-	npm publish
+	make build
+	npx surge ./dist/ project-lvl3-s390.surge.sh
 
 .PHONY: test
