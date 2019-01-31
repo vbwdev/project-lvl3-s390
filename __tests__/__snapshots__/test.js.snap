@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rss reader should init without changes 1`] = `
+"<title>Webpack Package</title>
+<div class=\\"container\\" id=\\"app\\">
+  <h1>RSS Reader</h1>
+  <form class=\\"js-rss-url-form jumbotron\\">
+    <div class=\\"form-group\\">
+      <label for=\\"rss-url\\">RSS URL</label>
+      <input type=\\"text\\" class=\\"js-rss-url-input form-control\\" id=\\"rss-url\\" placeholder=\\"RSS URL\\" autocomplete=\\"off\\">
+    </div>
+    <button type=\\"submit\\" class=\\"js-rss-url-submit-button btn btn-primary\\" disabled=\\"\\">Submit</button>
+  </form>
+</div>"
+`;
