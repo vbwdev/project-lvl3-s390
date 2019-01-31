@@ -5,12 +5,15 @@
   </head>
   <body>
     <div class="container" id="app">
+      <div class="js-alert-popup alert alert-danger fade text-center" role="alert">
+        Something went wrong.
+      </div>
       <div>
-      <h1>RSS Reader</h1>
+        <h1>RSS Reader</h1>
         <form class="js-rss-url-form jumbotron">
           <div class="form-group">
             <label for="rss-url">RSS URL</label>
-            <input type="text" class="js-rss-url-input form-control" id="rss-url" placeholder="RSS URL" autocomplete="off" value="http://lorem-rss.herokuapp.com/feed" />
+            <input type="text" class="js-rss-url-input form-control" id="rss-url" placeholder="RSS URL" autocomplete="off" />
           </div>
           <button type="submit" class="js-rss-url-submit-button btn btn-primary" disabled>Submit</button>
         </form>

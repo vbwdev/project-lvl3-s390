@@ -94,6 +94,7 @@ export default () => {
     channels: [],
     articles: [],
     isLoading: false,
+    hasLoadingError: false,
   };
 
   const rssUrlForm = document.querySelector('.js-rss-url-form');
@@ -101,6 +102,7 @@ export default () => {
   const rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
   const channelsList = document.querySelector('.js-rss-channels-list');
   const articlesList = document.querySelector('.js-rss-articles-list');
+  const alertPopup = document.querySelector('.js-alert-popup');
 
   rssUrlInput.addEventListener('input', e => {
     const { value: url } = e.target;
@@ -134,6 +136,11 @@ export default () => {
         state.channels = channels;
         state.articles = articles;
         state.isLoading = false;
+      })
+      .catch(() => {
+        console.log('Catch error');
+        state.hasLoadingError = true;
+        state.isLoading = false;
       });
   });
 
@@ -145,5 +152,9 @@ export default () => {
   watch(state, ['articles', 'channels', 'isLoading'], () => {
     channelsList.innerHTML = getChannelsListHtml(state.channels, state.isLoading);
     articlesList.innerHTML = getArticlesListHtml(state.articles, state.isLoading);
+  });
+
+  watch(state, 'hasLoadingError', () => {
+    alertPopup.classList.toggle('show');
   });
 };
