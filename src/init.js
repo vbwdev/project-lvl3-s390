@@ -10,7 +10,10 @@ const { watch } = WatchJS;
 // import Example from './Example';
 
 const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
-const getWithProxy = url => axios.get(`${corsProxyUrl}${url}`);
+const getWithProxy = url => {
+  console.log('url', `${corsProxyUrl}${url}`);
+  return axios.get(`${corsProxyUrl}${url}`);
+};
 
 const parseResponseToDom = ({ data }) => new DOMParser().parseFromString(data, 'application/xml');
 
@@ -32,6 +35,10 @@ const getChannelAndArticles = rssDom => {
 
 const getChannelAndArticlesData = url =>
   getWithProxy(url)
+    .then(data => {
+      console.log('get data', data);
+      return data;
+    })
     .then(parseResponseToDom)
     .then(getChannelAndArticles);
 
