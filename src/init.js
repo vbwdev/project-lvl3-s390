@@ -35,7 +35,40 @@ const getChannelAndArticlesData = url =>
     .then(parseResponseToDom)
     .then(getChannelAndArticles);
 
-const getRssData = urls => Promise.all(urls.map(getChannelAndArticlesData));
+const getRssFeedsData = urls => Promise.all(urls.map(getChannelAndArticlesData));
+
+const mergeChannelsAndArticlesData = channelsAndArticles =>
+  channelsAndArticles.reduce(
+    (acc, channelAndArticles) => ({
+      channels: [...acc.channels, channelAndArticles.channel],
+      articles: [...acc.articles, ...channelAndArticles.articles],
+    }),
+    {
+      channels: [],
+      articles: [],
+    },
+  );
+
+const getChannelsListHtml = channels => {
+  if (channels.length === 0) {
+    return '<li class="list-group-item">No channels added</li>';
+  }
+  const channelsHtml = channels.map(
+    ({ title, description }) => `<li class="list-group-item"><h4>${title}</h4>${description}</li>`,
+  );
+  return channelsHtml.join('');
+};
+
+const getArticlesListHtml = articles => {
+  if (articles.length === 0) {
+    return '<div class="list-group-item">No articles</div>';
+  }
+  const articlesHtml = articles.map(
+    ({ title, link }) =>
+      `<a class="list-group-item list-group-item-action" href="${link}" target="_blank">${title}</a>`,
+  );
+  return articlesHtml.join('');
+};
 
 export default () => {
   const state = {
@@ -46,7 +79,6 @@ export default () => {
     rssUrls: [],
     channels: [],
     articles: [],
-    rssData: [],
   };
 
   const rssUrlForm = document.querySelector('.js-rss-url-form');
@@ -80,9 +112,12 @@ export default () => {
     rssUrlInput.value = ''; // TODO Rework with state?
     rssUrlSubmitButton.disabled = true; // TODO Rework with state?
 
-    return getRssData(state.rssUrls).then(rssData => {
-      state.rssData = rssData;
-    });
+    return getRssFeedsData(state.rssUrls)
+      .then(mergeChannelsAndArticlesData)
+      .then(({ channels, articles }) => {
+        state.channels = channels;
+        state.articles = articles;
+      });
   });
 
   watch(state.addUrlForm, ['hasUrlError', 'canSubscribe'], () => {
@@ -90,46 +125,8 @@ export default () => {
     rssUrlSubmitButton.disabled = !state.addUrlForm.canSubscribe;
   });
 
-  watch(state, 'channels', () => {
-    if (state.channels.length === 0) {
-      const el = document.createElement('li');
-      el.classList.add('list-group-item');
-      el.textContent = 'No channels';
-      channelsList.innerHTML = el;
-    } else {
-      const els = state.channels.map(({ title, description }) => {
-        const el = document.createElement('li');
-        el.classList.add('list-group-item');
-        el.textContent = `${title} --- ${description}`;
-        console.log(el);
-        return el.outerHTML;
-      });
-      console.log(els);
-      channelsList.innerHTML = els.join('');
-    }
-    console.log('channels was updated', state.channels);
-  });
-
-  watch(state, 'articles', () => {
-    if (state.articles.length === 0) {
-      const el = document.createElement('div');
-      el.classList.add('list-group-item');
-      el.textContent = 'No articles';
-      articlesList.innerHTML = el;
-    } else {
-      const els = state.articles.map(({ title, link }) => {
-        const el = document.createElement('a');
-        el.classList.add('list-group-item');
-        el.classList.add('list-group-item-action');
-        el.target = '_blank';
-        el.href = link;
-        el.textContent = title;
-        console.log(el);
-        return el.outerHTML;
-      });
-      console.log(els);
-      articlesList.innerHTML = els.join('');
-    }
-    console.log('articles was updated', state.articles);
+  watch(state, ['articles', 'channels'], () => {
+    channelsList.innerHTML = getChannelsListHtml(state.channels);
+    articlesList.innerHTML = getArticlesListHtml(state.articles);
   });
 };
