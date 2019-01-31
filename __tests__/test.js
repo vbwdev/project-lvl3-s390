@@ -26,7 +26,7 @@ const pressKey = (key, el = document.body, value = key) => {
 const readFile = promisify(fs.readFile);
 
 describe('rss reader', () => {
-  // let rssUrlForm;
+  let rssUrlForm;
   let rssUrlInput;
   let rssUrlSubmitButton;
 
@@ -36,7 +36,7 @@ describe('rss reader', () => {
     init();
     rssUrlInput = document.querySelector('.js-rss-url-input');
     rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
-    // rssUrlForm = document.querySelector('.js-rss-url-form');
+    rssUrlForm = document.querySelector('.js-rss-url-form');
   });
 
   test('should init without changes', () => {
@@ -74,15 +74,19 @@ describe('rss reader', () => {
     }, 0);
   });
 
-  // Cant submit form
-  xtest('should not add duplicates url', done => {
-    rssUrlInput.focus();
+  test('should clear input and disable button after form submitting', () => {
     pressKey('m', rssUrlInput, 'test.com');
-    pressKey('Enter', rssUrlInput, 'test.com');
-    rssUrlSubmitButton.click();
+    rssUrlForm.dispatchEvent(new Event('submit'));
+    expect(rssUrlInput.value).toBe('');
+    expect(rssUrlSubmitButton.disabled).toBe(true);
+  });
 
-    rssUrlInput.focus();
+  test('should not add duplicated url', done => {
     pressKey('m', rssUrlInput, 'test.com');
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    pressKey('m', rssUrlInput, 'test.com');
+    rssUrlForm.dispatchEvent(new Event('submit'));
 
     setTimeout(() => {
       expect(rssUrlInput.classList.contains('is-invalid')).toBe(true);
