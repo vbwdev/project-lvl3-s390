@@ -49,7 +49,18 @@ const mergeChannelsAndArticlesData = channelsAndArticles =>
     },
   );
 
-const getChannelsListHtml = channels => {
+const getSpinnerHtml = () => `
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+`;
+
+const getChannelsListHtml = (channels, isLoading) => {
+  if (isLoading) {
+    return getSpinnerHtml();
+  }
   if (channels.length === 0) {
     return '<li class="list-group-item">No channels added</li>';
   }
@@ -59,7 +70,10 @@ const getChannelsListHtml = channels => {
   return channelsHtml.join('');
 };
 
-const getArticlesListHtml = articles => {
+const getArticlesListHtml = (articles, isLoading) => {
+  if (isLoading) {
+    return getSpinnerHtml();
+  }
   if (articles.length === 0) {
     return '<div class="list-group-item">No articles</div>';
   }
@@ -79,6 +93,7 @@ export default () => {
     rssUrls: [],
     channels: [],
     articles: [],
+    isLoading: false,
   };
 
   const rssUrlForm = document.querySelector('.js-rss-url-form');
@@ -112,11 +127,13 @@ export default () => {
     rssUrlInput.value = ''; // TODO Rework with state?
     rssUrlSubmitButton.disabled = true; // TODO Rework with state?
 
+    state.isLoading = true;
     return getRssFeedsData(state.rssUrls)
       .then(mergeChannelsAndArticlesData)
       .then(({ channels, articles }) => {
         state.channels = channels;
         state.articles = articles;
+        state.isLoading = false;
       });
   });
 
@@ -125,8 +142,8 @@ export default () => {
     rssUrlSubmitButton.disabled = !state.addUrlForm.canSubscribe;
   });
 
-  watch(state, ['articles', 'channels'], () => {
-    channelsList.innerHTML = getChannelsListHtml(state.channels);
-    articlesList.innerHTML = getArticlesListHtml(state.articles);
+  watch(state, ['articles', 'channels', 'isLoading'], () => {
+    channelsList.innerHTML = getChannelsListHtml(state.channels, state.isLoading);
+    articlesList.innerHTML = getArticlesListHtml(state.articles, state.isLoading);
   });
 };
