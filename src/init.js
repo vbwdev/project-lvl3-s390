@@ -9,6 +9,34 @@ const { watch } = WatchJS;
 
 // import Example from './Example';
 
+const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
+const getWithProxy = url => axios.get(`${corsProxyUrl}${url}`);
+
+const parseResponseToDom = ({ data }) => new DOMParser().parseFromString(data, 'application/xml');
+
+const getChannelAndArticles = rssDom => {
+  const channel = {
+    title: rssDom.querySelector('title').textContent,
+    description: rssDom.querySelector('description').textContent,
+  };
+  const articlesNodes = rssDom.querySelectorAll('item');
+  const articles = [...articlesNodes].map(article => ({
+    title: article.querySelector('title').textContent,
+    link: article.querySelector('link').textContent,
+  }));
+  return {
+    channel,
+    articles,
+  };
+};
+
+const getChannelAndArticlesData = url =>
+  getWithProxy(url)
+    .then(parseResponseToDom)
+    .then(getChannelAndArticles);
+
+const getRssData = urls => Promise.all(urls.map(getChannelAndArticlesData));
+
 export default () => {
   const state = {
     addUrlForm: {
@@ -18,6 +46,7 @@ export default () => {
     rssUrls: [],
     channels: [],
     articles: [],
+    rssData: [],
   };
 
   const rssUrlForm = document.querySelector('.js-rss-url-form');
@@ -51,40 +80,9 @@ export default () => {
     rssUrlInput.value = ''; // TODO Rework with state?
     rssUrlSubmitButton.disabled = true; // TODO Rework with state?
 
-    const rssUrls = state.rssUrls.map(rssUrl => {
-      return axios.get(`https://cors-anywhere.herokuapp.com/${rssUrl}`);
+    return getRssData(state.rssUrls).then(rssData => {
+      state.rssData = rssData;
     });
-
-    return Promise.all(rssUrls)
-      .then(channelsRowData => {
-        return channelsRowData.map(({ data: channelRowData }) =>
-          new DOMParser().parseFromString(channelRowData, 'application/xml'),
-        );
-      })
-      .then(channels => {
-        const channelsData = [];
-        const itemsData = [];
-        channels.forEach(channel => {
-          const channelTitle = channel.querySelector('title').textContent;
-          const channelDescription = channel.querySelector('description').textContent;
-          channelsData.push({
-            title: channelTitle,
-            description: channelDescription,
-          });
-
-          const items = channel.querySelectorAll('item');
-          items.forEach(item => {
-            const itemTitle = item.querySelector('title').textContent;
-            const itemLink = item.querySelector('link').textContent;
-            itemsData.push({
-              title: itemTitle,
-              link: itemLink,
-            });
-          });
-        });
-        state.channels = channelsData;
-        state.articles = itemsData;
-      });
   });
 
   watch(state.addUrlForm, ['hasUrlError', 'canSubscribe'], () => {
