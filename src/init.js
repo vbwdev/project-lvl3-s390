@@ -130,6 +130,7 @@ export default () => {
     rssUrlSubmitButton.disabled = true; // TODO Rework with state?
 
     state.isLoading = true;
+    state.hasLoadingError = false;
     return getRssFeedsData(state.rssUrls)
       .then(mergeChannelsAndArticlesData)
       .then(({ channels, articles }) => {
