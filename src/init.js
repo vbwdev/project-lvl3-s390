@@ -5,8 +5,6 @@ import axios from 'axios';
 import isUrl from 'validator/lib/isURL';
 import WatchJS from 'melanke-watchjs';
 
-import { getNodeFromHtmlString } from './utils';
-
 import getAlertHtml from './components/alert';
 import getArticlesListHtml from './components/articlesList';
 import getChannelsListHtml from './components/channelsList';
@@ -122,6 +120,7 @@ export default () => {
   const rssUrlForm = document.querySelector('.js-rss-url-form');
   const rssUrlInput = document.querySelector('.js-rss-url-input');
   const rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
+  const formAlerts = document.querySelector('.js-form-alerts');
   const channelsList = document.querySelector('.js-rss-channels-list');
   const articlesList = document.querySelector('.js-rss-articles-list');
   const articleDescriptionModal = document.querySelector('#articleDescriptionModal');
@@ -184,16 +183,7 @@ export default () => {
     rssUrlSubmitButton.innerHTML = isFetching
       ? '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
       : 'Submit';
-
-    if (formError) {
-      const alertNode = getNodeFromHtmlString(getAlertHtml(formError, 'js-form-error'));
-      rssUrlForm.prepend(alertNode);
-    } else {
-      const error = rssUrlForm.querySelector('.js-form-error');
-      if (error) {
-        error.remove();
-      }
-    }
+    formAlerts.innerHTML = formError ? getAlertHtml(formError) : '';
   });
 
   watch(state, ['articles', 'channels'], () => {
