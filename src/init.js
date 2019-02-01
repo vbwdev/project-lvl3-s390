@@ -127,6 +127,10 @@ export default () => {
   const articleDescriptionModal = document.querySelector('#articleDescriptionModal');
 
   rssUrlInput.addEventListener('input', e => {
+    if (state.addUrlForm.isFetching) {
+      return false;
+    }
+
     const { value: url } = e.target;
     if (url === '') {
       state.addUrlForm = getUrlFormState('empty', state.addUrlForm);
@@ -135,12 +139,13 @@ export default () => {
     } else {
       state.addUrlForm = getUrlFormState('validation-no-error', state.addUrlForm, { url });
     }
+    return true;
   });
 
   rssUrlForm.addEventListener('submit', e => {
     e.preventDefault();
 
-    if (!state.addUrlForm.canSubscribe) {
+    if (!state.addUrlForm.canSubscribe || state.addUrlForm.isFetching) {
       return false;
     }
 
