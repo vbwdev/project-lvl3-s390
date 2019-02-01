@@ -54,7 +54,7 @@ const mergeChannelsAndArticlesData = channelsAndArticles =>
 
 const getChannelsAndArticlesData = urls => getRssFeedsData(urls).then(mergeChannelsAndArticlesData);
 
-const getUrlFormState = (stateName, oldState, { url, formError } = {}) => {
+const getUrlFormState = (stateName, oldState, { url, error } = {}) => {
   switch (stateName) {
     case 'validation-error':
       return {
@@ -62,7 +62,7 @@ const getUrlFormState = (stateName, oldState, { url, formError } = {}) => {
         formError: null,
         hasUrlError: true,
         isFetching: false,
-        urlInputValue: url,
+        urlInputValue: url || oldState.addUrlForm.urlInputValue,
       };
     case 'fetching':
       return {
@@ -70,15 +70,15 @@ const getUrlFormState = (stateName, oldState, { url, formError } = {}) => {
         formError: null,
         hasUrlError: false,
         isFetching: true,
-        urlInputValue: oldState.urlInputValue,
+        urlInputValue: url || oldState.addUrlForm.urlInputValue,
       };
     case 'fetching-error':
       return {
         canSubscribe: true,
-        formError,
+        formError: error,
         hasUrlError: false,
         isFetching: false,
-        urlInputValue: oldState.urlInputValue,
+        urlInputValue: url || oldState.addUrlForm.urlInputValue,
       };
     case 'validation-no-error':
       return {
@@ -86,7 +86,7 @@ const getUrlFormState = (stateName, oldState, { url, formError } = {}) => {
         formError: null,
         hasUrlError: false,
         isFetching: false,
-        urlInputValue: url || oldState.urlInputValue,
+        urlInputValue: url || oldState.addUrlForm.urlInputValue,
       };
     case 'empty':
       return {
@@ -98,7 +98,7 @@ const getUrlFormState = (stateName, oldState, { url, formError } = {}) => {
       };
     default:
       console.error(`Unknown state name "${stateName}"`);
-      return oldState;
+      return oldState.addUrlForm;
   }
 };
 
@@ -117,6 +117,10 @@ export default () => {
     },
   };
 
+  const setUrlFormState = (stateName, values) => {
+    Object.assign(state, { addUrlForm: getUrlFormState(stateName, state, values) });
+  };
+
   const rssUrlForm = document.querySelector('.js-rss-url-form');
   const rssUrlInput = document.querySelector('.js-rss-url-input');
   const rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
@@ -132,11 +136,11 @@ export default () => {
 
     const { value: url } = e.target;
     if (url === '') {
-      state.addUrlForm = getUrlFormState('empty', state.addUrlForm);
+      setUrlFormState('empty');
     } else if (!isUrl(url) || state.rssUrls.includes(url)) {
-      state.addUrlForm = getUrlFormState('validation-error', state.addUrlForm, { url });
+      setUrlFormState('validation-error', { url });
     } else {
-      state.addUrlForm = getUrlFormState('validation-no-error', state.addUrlForm, { url });
+      setUrlFormState('validation-no-error', { url });
     }
     return true;
   });
@@ -148,19 +152,17 @@ export default () => {
       return false;
     }
 
-    state.addUrlForm = getUrlFormState('fetching', state.addUrlForm);
+    setUrlFormState('fetching');
 
     return getChannelsAndArticlesData([...state.rssUrls, rssUrlInput.value])
       .then(({ channels, articles }) => {
-        state.addUrlForm = getUrlFormState('empty');
+        setUrlFormState('empty');
         state.rssUrls = [...state.rssUrls, rssUrlInput.value];
         state.channels = channels;
         state.articles = articles;
       })
       .catch(error => {
-        state.addUrlForm = getUrlFormState('fetching-error', state.addUrlForm, {
-          formError: error,
-        });
+        setUrlFormState('fetching-error', { error });
       });
   });
 
