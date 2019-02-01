@@ -31,7 +31,7 @@ describe('rss reader', () => {
   let rssUrlSubmitButton;
 
   beforeEach(async () => {
-    const pathToHtml = path.resolve(__dirname, '__fixtures__/index.html');
+    const pathToHtml = path.resolve(__dirname, '../template.html');
     document.body.innerHTML = await readFile(pathToHtml, 'utf8');
     init();
     rssUrlInput = document.querySelector('.js-rss-url-input');
