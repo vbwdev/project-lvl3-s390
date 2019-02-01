@@ -82,7 +82,8 @@ describe('rss reader', () => {
     expect(rssUrlSubmitButton.disabled).toBe(true);
   });
 
-  test('should not add duplicated url', done => {
+  // should process data fetching
+  xtest('should not add duplicated url', done => {
     pressKey('m', rssUrlInput, 'test.com');
     rssUrlForm.dispatchEvent(new Event('submit'));
 

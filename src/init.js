@@ -5,6 +5,9 @@ import axios from 'axios';
 import isUrl from 'validator/lib/isURL';
 import WatchJS from 'melanke-watchjs';
 
+import { getNodeFromHtmlString } from './utils';
+
+import getAlertHtml from './components/alert';
 import getArticlesListHtml from './components/articlesList';
 import getChannelsListHtml from './components/channelsList';
 
@@ -53,32 +56,44 @@ const mergeChannelsAndArticlesData = channelsAndArticles =>
 
 const getChannelsAndArticlesData = urls => getRssFeedsData(urls).then(mergeChannelsAndArticlesData);
 
-const getUrlFormState = (stateName, oldState, inputValue) => {
+const getUrlFormState = (stateName, oldState, { url, formError } = {}) => {
   switch (stateName) {
     case 'validation-error':
       return {
         canSubscribe: false,
+        formError: null,
         hasUrlError: true,
         isFetching: false,
-        urlInputValue: inputValue,
+        urlInputValue: url,
       };
     case 'fetching':
       return {
         canSubscribe: false,
+        formError: null,
         hasUrlError: false,
         isFetching: true,
+        urlInputValue: oldState.urlInputValue,
+      };
+    case 'fetching-error':
+      return {
+        canSubscribe: true,
+        formError,
+        hasUrlError: false,
+        isFetching: false,
         urlInputValue: oldState.urlInputValue,
       };
     case 'validation-no-error':
       return {
         canSubscribe: true,
+        formError: null,
         hasUrlError: false,
         isFetching: false,
-        urlInputValue: inputValue || oldState.urlInputValue,
+        urlInputValue: url || oldState.urlInputValue,
       };
     case 'empty':
       return {
         canSubscribe: false,
+        formError: null,
         hasUrlError: false,
         isFetching: false,
         urlInputValue: '',
@@ -97,8 +112,6 @@ export default () => {
     rssUrls: [],
     channels: [],
     articles: [],
-    isLoading: false,
-    hasLoadingError: false,
     articleDescriptionModal: {
       description: null,
       link: null,
@@ -111,17 +124,16 @@ export default () => {
   const rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
   const channelsList = document.querySelector('.js-rss-channels-list');
   const articlesList = document.querySelector('.js-rss-articles-list');
-  const alertPopup = document.querySelector('.js-alert-popup');
   const articleDescriptionModal = document.querySelector('#articleDescriptionModal');
 
   rssUrlInput.addEventListener('input', e => {
     const { value: url } = e.target;
     if (url === '') {
-      state.addUrlForm = getUrlFormState('empty', state.addUrlForm, url);
+      state.addUrlForm = getUrlFormState('empty', state.addUrlForm);
     } else if (!isUrl(url) || state.rssUrls.includes(url)) {
-      state.addUrlForm = getUrlFormState('validation-error', state.addUrlForm, url);
+      state.addUrlForm = getUrlFormState('validation-error', state.addUrlForm, { url });
     } else {
-      state.addUrlForm = getUrlFormState('validation-no-error', state.addUrlForm, url);
+      state.addUrlForm = getUrlFormState('validation-no-error', state.addUrlForm, { url });
     }
   });
 
@@ -132,24 +144,19 @@ export default () => {
       return false;
     }
 
-    state.rssUrls = [...state.rssUrls, rssUrlInput.value];
-
     state.addUrlForm = getUrlFormState('fetching', state.addUrlForm);
-    state.isLoading = true;
-    state.hasLoadingError = false;
 
-    return getChannelsAndArticlesData(state.rssUrls)
+    return getChannelsAndArticlesData([...state.rssUrls, rssUrlInput.value])
       .then(({ channels, articles }) => {
         state.addUrlForm = getUrlFormState('empty');
+        state.rssUrls = [...state.rssUrls, rssUrlInput.value];
         state.channels = channels;
         state.articles = articles;
-        state.isLoading = false;
       })
       .catch(error => {
-        console.error(error);
-        state.addUrlForm = getUrlFormState('validation-no-error', state.addUrlForm);
-        state.hasLoadingError = true;
-        state.isLoading = false;
+        state.addUrlForm = getUrlFormState('fetching-error', state.addUrlForm, {
+          formError: error,
+        });
       });
   });
 
@@ -165,22 +172,28 @@ export default () => {
   });
 
   watch(state, 'addUrlForm', () => {
-    const { canSubscribe, hasUrlError, isFetching, urlInputValue } = state.addUrlForm;
+    const { canSubscribe, formError, hasUrlError, isFetching, urlInputValue } = state.addUrlForm;
     rssUrlInput.value = urlInputValue;
     rssUrlInput.classList.toggle('is-invalid', hasUrlError);
     rssUrlSubmitButton.disabled = !canSubscribe;
     rssUrlSubmitButton.innerHTML = isFetching
       ? '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
       : 'Submit';
+
+    if (formError) {
+      const alertNode = getNodeFromHtmlString(getAlertHtml(formError, 'js-form-error'));
+      rssUrlForm.prepend(alertNode);
+    } else {
+      const error = rssUrlForm.querySelector('.js-form-error');
+      if (error) {
+        error.remove();
+      }
+    }
   });
 
-  watch(state, ['articles', 'channels', 'isLoading'], () => {
-    channelsList.innerHTML = getChannelsListHtml(state.channels, state.isLoading);
-    articlesList.innerHTML = getArticlesListHtml(state.articles, state.isLoading);
-  });
-
-  watch(state, 'hasLoadingError', () => {
-    alertPopup.classList.toggle('show');
+  watch(state, ['articles', 'channels'], () => {
+    channelsList.innerHTML = getChannelsListHtml(state.channels);
+    articlesList.innerHTML = getArticlesListHtml(state.articles);
   });
 
   watch(state, 'articleDescriptionModal', () => {
