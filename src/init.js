@@ -51,14 +51,48 @@ const mergeChannelsAndArticlesData = channelsAndArticles =>
     },
   );
 
-const getChannelsAndArticlesData = urls =>
-  getRssFeedsData(urls).then(mergeChannelsAndArticlesData);
+const getChannelsAndArticlesData = urls => getRssFeedsData(urls).then(mergeChannelsAndArticlesData);
+
+const getUrlFormState = (stateName, oldState, inputValue) => {
+  switch (stateName) {
+    case 'validation-error':
+      return {
+        canSubscribe: false,
+        hasUrlError: true,
+        isFetching: false,
+        urlInputValue: inputValue,
+      };
+    case 'fetching':
+      return {
+        canSubscribe: false,
+        hasUrlError: false,
+        isFetching: true,
+        urlInputValue: oldState.urlInputValue,
+      };
+    case 'validation-no-error':
+      return {
+        canSubscribe: true,
+        hasUrlError: false,
+        isFetching: false,
+        urlInputValue: inputValue || oldState.urlInputValue,
+      };
+    case 'empty':
+      return {
+        canSubscribe: false,
+        hasUrlError: false,
+        isFetching: false,
+        urlInputValue: '',
+      };
+    default:
+      console.error(`Unknown state name "${stateName}"`);
+      return oldState;
+  }
+};
 
 export default () => {
   const state = {
     addUrlForm: {
-      hasUrlError: false,
-      canSubscribe: false,
+      ...getUrlFormState('empty'),
     },
     rssUrls: [],
     channels: [],
@@ -83,14 +117,11 @@ export default () => {
   rssUrlInput.addEventListener('input', e => {
     const { value: url } = e.target;
     if (url === '') {
-      state.addUrlForm.hasUrlError = false;
-      state.addUrlForm.canSubscribe = false;
+      state.addUrlForm = getUrlFormState('empty', state.addUrlForm, url);
     } else if (!isUrl(url) || state.rssUrls.includes(url)) {
-      state.addUrlForm.hasUrlError = true;
-      state.addUrlForm.canSubscribe = false;
+      state.addUrlForm = getUrlFormState('validation-error', state.addUrlForm, url);
     } else {
-      state.addUrlForm.hasUrlError = false;
-      state.addUrlForm.canSubscribe = true;
+      state.addUrlForm = getUrlFormState('validation-no-error', state.addUrlForm, url);
     }
   });
 
@@ -102,20 +133,21 @@ export default () => {
     }
 
     state.rssUrls = [...state.rssUrls, rssUrlInput.value];
-    rssUrlInput.value = ''; // TODO Rework with state?
-    rssUrlSubmitButton.disabled = true; // TODO Rework with state?
 
+    state.addUrlForm = getUrlFormState('fetching', state.addUrlForm);
     state.isLoading = true;
     state.hasLoadingError = false;
-    return getRssFeedsData(state.rssUrls)
-      .then(mergeChannelsAndArticlesData)
+
+    return getChannelsAndArticlesData(state.rssUrls)
       .then(({ channels, articles }) => {
+        state.addUrlForm = getUrlFormState('empty');
         state.channels = channels;
         state.articles = articles;
         state.isLoading = false;
       })
-      .catch(() => {
-        console.log('Catch error');
+      .catch(error => {
+        console.error(error);
+        state.addUrlForm = getUrlFormState('validation-no-error', state.addUrlForm);
         state.hasLoadingError = true;
         state.isLoading = false;
       });
@@ -132,9 +164,14 @@ export default () => {
     }
   });
 
-  watch(state.addUrlForm, ['hasUrlError', 'canSubscribe'], () => {
-    rssUrlInput.classList.toggle('is-invalid', state.addUrlForm.hasUrlError);
-    rssUrlSubmitButton.disabled = !state.addUrlForm.canSubscribe;
+  watch(state, 'addUrlForm', () => {
+    const { canSubscribe, hasUrlError, isFetching, urlInputValue } = state.addUrlForm;
+    rssUrlInput.value = urlInputValue;
+    rssUrlInput.classList.toggle('is-invalid', hasUrlError);
+    rssUrlSubmitButton.disabled = !canSubscribe;
+    rssUrlSubmitButton.innerHTML = isFetching
+      ? '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+      : 'Submit';
   });
 
   watch(state, ['articles', 'channels', 'isLoading'], () => {
