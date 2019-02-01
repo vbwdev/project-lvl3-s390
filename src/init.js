@@ -1,13 +1,14 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
 
+import axios from 'axios';
 import isUrl from 'validator/lib/isURL';
 import WatchJS from 'melanke-watchjs';
 
-const { watch } = WatchJS;
+import getArticlesListHtml from './components/articlesList';
+import getChannelsListHtml from './components/channelsList';
 
-// import Example from './Example';
+const { watch } = WatchJS;
 
 const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
 const getWithProxy = url => axios.get(`${corsProxyUrl}${url}`);
@@ -50,54 +51,8 @@ const mergeChannelsAndArticlesData = channelsAndArticles =>
     },
   );
 
-const getSpinnerHtml = () => `
-  <div class="d-flex justify-content-center">
-    <div class="spinner-border text-primary">
-      <span class="sr-only">Loading...</span>
-    </div>
-  </div>
-`;
-
-const getChannelsListHtml = (channels, isLoading) => {
-  if (isLoading) {
-    return getSpinnerHtml();
-  }
-  if (channels.length === 0) {
-    return '<li class="list-group-item">No channels added</li>';
-  }
-  const channelsHtml = channels.map(
-    ({ title, description }) => `<li class="list-group-item"><h4>${title}</h4>${description}</li>`,
-  );
-  return channelsHtml.join('');
-};
-
-const getArticlesListHtml = (articles, isLoading) => {
-  if (isLoading) {
-    return getSpinnerHtml();
-  }
-  if (articles.length === 0) {
-    return '<div class="list-group-item">No articles</div>';
-  }
-  const articlesHtml = articles.map(
-    ({ description, link, title }) => `
-      <div class="list-group-item">
-        <h4><a class="" href="${link}" target="_blank">${title}</a></h4>
-        <button
-          class="js-show-article-modal-button btn btn-primary"
-          data-description="${description}"
-          data-link="${link}"
-          data-target="#articleDescriptionModal"
-          data-title="${title}"
-          data-toggle="modal"
-          type="button"
-        >
-          More
-        </button>
-      </div>
-    `,
-  );
-  return articlesHtml.join('');
-};
+const getChannelsAndArticlesData = urls =>
+  getRssFeedsData(urls).then(mergeChannelsAndArticlesData);
 
 export default () => {
   const state = {
