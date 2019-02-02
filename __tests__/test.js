@@ -129,6 +129,7 @@ describe('rss reader', () => {
       );
     })().then(() => {
       setTimeout(() => {
+        console.log(getTree());
         expect(rssUrlInput.classList.contains('is-invalid')).toBe(true);
         expect(rssUrlSubmitButton.disabled).toBe(true);
         done();
