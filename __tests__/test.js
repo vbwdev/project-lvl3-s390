@@ -32,6 +32,7 @@ const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 const proxyHeaders = { 'access-control-allow-origin': '*' };
 const channelsListSelector = '.js-rss-channels-list';
 const articlesListSelector = '.js-rss-articles-list';
+const formAlertsSelector = '.js-form-alerts';
 
 describe('rss reader', () => {
   const rssFeedHexletPart1 = fs.readFileSync(
@@ -131,6 +132,24 @@ describe('rss reader', () => {
         done();
       }, 100);
     });
+  });
+
+  test('should show error if loading failed', done => {
+    const url = 'https://test.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .reply(500);
+
+    pressKey('m', rssUrlInput, url);
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    setTimeout(() => {
+      expect(
+        html(document.querySelector(formAlertsSelector).innerHTML, htmlOptions),
+      ).toMatchSnapshot();
+      done();
+    }, 100);
   });
 
   test('should render channels and articles list', done => {
