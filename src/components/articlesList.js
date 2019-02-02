@@ -13,7 +13,7 @@ const getArticlesListHtml = (articles, isLoading) => {
         <h4><a class="" href="${link}" target="_blank">${title}</a></h4>
         <button
           class="js-show-article-modal-button btn btn-primary"
-          data-link="${link}"
+          data-id="${link}"
           data-target="#articleDescriptionModal"
           data-toggle="modal"
           type="button"

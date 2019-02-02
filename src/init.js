@@ -175,7 +175,8 @@ export default () => {
 
   document.addEventListener('click', ({ target }) => {
     if (target.classList.contains('js-show-article-modal-button')) {
-      const { description, link, title } = target.dataset;
+      const { id } = target.dataset;
+      const { description, link, title } = state.articles[id] || {};
       state.articleDescriptionModal = {
         description,
         link,
