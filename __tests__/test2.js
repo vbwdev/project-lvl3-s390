@@ -17,8 +17,6 @@ const htmlOptions = {
   preserve_newlines: false,
 };
 
-const getTree = () => html(document.body.innerHTML, htmlOptions);
-
 const pressKey = (key, el = document.body, value = key) => {
   const keyCode = keycode(key);
   const e = new KeyboardEvent('input', { keyCode });
@@ -34,8 +32,6 @@ const proxyHeaders = { 'access-control-allow-origin': '*' };
 
 const articlesListSelector = '.js-rss-articles-list';
 const channelsListSelector = '.js-rss-channels-list';
-const formAlertsSelector = '.js-form-alerts';
-const formSelector = '.js-rss-url-form';
 
 describe('rss reader', () => {
   nock.disableNetConnect();
@@ -47,17 +43,14 @@ describe('rss reader', () => {
     `${__dirname}/__fixtures__/rss-feed-hexlet-part-2.txt`,
     'utf8',
   );
-  const rssFeedLorem = fs.readFileSync(`${__dirname}/__fixtures__/rss-feed-lorem.txt`, 'utf8');
   let rssUrlForm;
   let rssUrlInput;
-  let rssUrlSubmitButton;
 
   beforeEach(async () => {
     const pathToHtml = path.resolve(__dirname, '../template.html');
     document.body.innerHTML = await readFile(pathToHtml, 'utf8');
     init();
     rssUrlInput = document.querySelector('.js-rss-url-input');
-    rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
     rssUrlForm = document.querySelector('.js-rss-url-form');
   });
 
