@@ -9,8 +9,6 @@ import nock from 'nock';
 
 import init from '../src/init';
 
-nock.disableNetConnect();
-
 const htmlOptions = {
   indent_size: 2,
   preserve_newlines: false,
@@ -37,6 +35,7 @@ const formAlertsSelector = '.js-form-alerts';
 const formSelector = '.js-rss-url-form';
 
 describe('rss reader', () => {
+  nock.disableNetConnect();
   const rssFeedHexletPart1 = fs.readFileSync(
     `${__dirname}/__fixtures__/rss-feed-hexlet-part-1.txt`,
     'utf8',
