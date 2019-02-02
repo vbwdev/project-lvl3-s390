@@ -34,7 +34,7 @@ describe('rss reader', () => {
   let rssUrlSubmitButton;
 
   beforeEach(async () => {
-    const pathToHtml = path.resolve(__dirname, '__fixtures__/index.html');
+    const pathToHtml = path.resolve(__dirname, '../template.html');
     document.body.innerHTML = await readFile(pathToHtml, 'utf8');
     init();
     rssUrlInput = document.querySelector('.js-rss-url-input');
@@ -77,20 +77,16 @@ describe('rss reader', () => {
     }, 0);
   });
 
+  // should clear input after success data fetching
   xtest('should clear input and disable button after form submitting', () => {
-    nock('test.com')
-      .get()
-      .reply(200);
     pressKey('m', rssUrlInput, 'test.com');
     rssUrlForm.dispatchEvent(new Event('submit'));
     expect(rssUrlInput.value).toBe('');
     expect(rssUrlSubmitButton.disabled).toBe(true);
   });
 
+  // should process data fetching
   xtest('should not add duplicated url', done => {
-    nock('test.com')
-      .get()
-      .reply(200);
     pressKey('m', rssUrlInput, 'test.com');
     rssUrlForm.dispatchEvent(new Event('submit'));
 

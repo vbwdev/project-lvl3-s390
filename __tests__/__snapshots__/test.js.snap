@@ -3,10 +3,27 @@
 exports[`rss reader should init without changes 1`] = `
 "<title>Webpack Package</title>
 <div class=\\"container\\" id=\\"app\\">
-  <div class=\\"js-alert-popup alert alert-danger fade text-center\\" role=\\"alert\\"> Something went wrong. </div>
+  <div class=\\"modal fade\\" id=\\"articleDescriptionModal\\" tabindex=\\"-1\\" role=\\"dialog\\" aria-labelledby=\\"articleDescriptionTitle\\" aria-hidden=\\"true\\">
+    <div class=\\"modal-dialog modal-dialog-centered\\" role=\\"document\\">
+      <div class=\\"modal-content\\">
+        <div class=\\"modal-header\\">
+          <h5 class=\\"js-modal-title modal-title\\" id=\\"articleDescriptionTitle\\"></h5>
+          <button type=\\"button\\" class=\\"close\\" data-dismiss=\\"modal\\" aria-label=\\"Close\\">
+            <span aria-hidden=\\"true\\">×</span>
+          </button>
+        </div>
+        <div class=\\"js-modal-description modal-body\\"></div>
+        <div class=\\"modal-footer\\">
+          <button type=\\"button\\" class=\\"btn btn-secondary\\" data-dismiss=\\"modal\\">Close</button>
+          <a href=\\"\\" class=\\"js-modal-link btn btn-primary\\" target=\\"_blank\\">Open article</a>
+        </div>
+      </div>
+    </div>
+  </div>
   <div>
     <h1>RSS Reader</h1>
     <form class=\\"js-rss-url-form jumbotron\\">
+      <div class=\\"js-form-alerts\\"></div>
       <div class=\\"form-group\\">
         <label for=\\"rss-url\\">RSS URL</label>
         <input type=\\"text\\" class=\\"js-rss-url-input form-control\\" id=\\"rss-url\\" placeholder=\\"RSS URL\\" autocomplete=\\"off\\">
