@@ -8,51 +8,12 @@ import WatchJS from 'melanke-watchjs';
 import getAlertHtml from './components/alert';
 import getArticlesListHtml from './components/articlesList';
 import getChannelsListHtml from './components/channelsList';
+import parseRssFeed from './parser';
 
 const { watch } = WatchJS;
 
 const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
 const getWithProxy = url => axios.get(`${corsProxyUrl}${url}`);
-
-const parseResponseToDom = ({ data }) => new DOMParser().parseFromString(data, 'application/xml');
-
-const getChannelAndArticles = rssDom => {
-  const channel = {
-    title: rssDom.querySelector('title').textContent,
-    description: rssDom.querySelector('description').textContent,
-  };
-  const articlesNodes = rssDom.querySelectorAll('item');
-  const articles = [...articlesNodes].map(article => ({
-    description: article.querySelector('description').textContent,
-    link: article.querySelector('link').textContent,
-    title: article.querySelector('title').textContent,
-  }));
-  return {
-    channel,
-    articles,
-  };
-};
-
-const getChannelAndArticlesData = url =>
-  getWithProxy(url)
-    .then(parseResponseToDom)
-    .then(getChannelAndArticles);
-
-const getRssFeedsData = urls => Promise.all(urls.map(getChannelAndArticlesData));
-
-const mergeChannelsAndArticlesData = channelsAndArticles =>
-  channelsAndArticles.reduce(
-    (acc, channelAndArticles) => ({
-      channels: [...acc.channels, channelAndArticles.channel],
-      articles: [...acc.articles, ...channelAndArticles.articles],
-    }),
-    {
-      channels: [],
-      articles: [],
-    },
-  );
-
-const getChannelsAndArticlesData = urls => getRssFeedsData(urls).then(mergeChannelsAndArticlesData);
 
 const getUrlFormState = (stateName, oldState, { url, error } = {}) => {
   switch (stateName) {
@@ -107,9 +68,7 @@ export default () => {
     addUrlForm: {
       ...getUrlFormState('empty'),
     },
-    rssUrls: [],
-    channels: [],
-    articles: [],
+    rssFeeds: {},
     articleDescriptionModal: {
       description: null,
       link: null,
@@ -120,6 +79,26 @@ export default () => {
   const setUrlFormState = (stateName, values) => {
     Object.assign(state, { addUrlForm: getUrlFormState(stateName, state, values) });
   };
+
+  const addRssFeed = url =>
+    getWithProxy(url)
+      .then(({ data }) => parseRssFeed(data))
+      .then(rssFeed => {
+        state.rssFeeds = {
+          ...state.rssFeeds,
+          [url]: rssFeed,
+        };
+      });
+
+  const getChannelsList = () => Object.values(state.rssFeeds);
+
+  const getArticlesList = () =>
+    Object.values(state.rssFeeds).reduce(
+      (acc, { articles }) => [...acc, ...Object.values(articles)],
+      [],
+    );
+
+  const isDuplicatedUrl = url => Object.keys(state.rssFeeds).includes(url);
 
   const rssUrlForm = document.querySelector('.js-rss-url-form');
   const rssUrlInput = document.querySelector('.js-rss-url-input');
@@ -137,7 +116,7 @@ export default () => {
     const { value: url } = e.target;
     if (url === '') {
       setUrlFormState('empty');
-    } else if (!isUrl(url) || state.rssUrls.includes(url)) {
+    } else if (!isUrl(url) || isDuplicatedUrl(url)) {
       setUrlFormState('validation-error', { url });
     } else {
       setUrlFormState('validation-no-error', { url });
@@ -153,13 +132,10 @@ export default () => {
     }
 
     setUrlFormState('fetching');
-
-    return getChannelsAndArticlesData([...state.rssUrls, rssUrlInput.value])
-      .then(({ channels, articles }) => {
+    const rssFeedUrl = rssUrlInput.value;
+    return addRssFeed(rssFeedUrl)
+      .then(() => {
         setUrlFormState('empty');
-        state.rssUrls = [...state.rssUrls, rssUrlInput.value];
-        state.channels = channels;
-        state.articles = articles;
       })
       .catch(error => {
         setUrlFormState('fetching-error', { error });
@@ -188,9 +164,11 @@ export default () => {
     formAlerts.innerHTML = formError ? getAlertHtml(formError) : '';
   });
 
-  watch(state, ['articles', 'channels'], () => {
-    channelsList.innerHTML = getChannelsListHtml(state.channels);
-    articlesList.innerHTML = getArticlesListHtml(state.articles);
+  watch(state, 'rssFeeds', () => {
+    const articles = getArticlesList();
+    const channels = getChannelsList();
+    channelsList.innerHTML = getChannelsListHtml(channels);
+    articlesList.innerHTML = getArticlesListHtml(articles);
   });
 
   watch(state, 'articleDescriptionModal', () => {
