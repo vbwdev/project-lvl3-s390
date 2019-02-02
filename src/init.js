@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import isUrl from 'validator/lib/isURL';
 import WatchJS from 'melanke-watchjs';
-import { isEmpty, keys } from 'lodash';
+import { isEmpty } from 'lodash';
 
 import getAlertHtml from './components/alert';
 import getArticlesListHtml from './components/articlesList';
@@ -69,7 +69,9 @@ export default () => {
     addUrlForm: {
       ...getUrlFormState('empty'),
     },
-    rssFeeds: {},
+    rssUrls: [],
+    articles: {},
+    channels: [],
     articleDescriptionModal: {
       description: null,
       link: null,
@@ -85,41 +87,39 @@ export default () => {
   const addRssFeed = url =>
     getWithProxy(url)
       .then(({ data }) => parseRssFeed(data))
-      .then(rssFeed => {
-        state.rssFeeds = {
-          ...state.rssFeeds,
-          [url]: rssFeed,
+      .then(({ articles, channel }) => {
+        state.rssUrls = [...state.rssUrls, url];
+        state.articles = {
+          ...state.articles,
+          ...articles,
         };
+        state.channels = [...state.channels, channel];
       });
 
   const updateRssFeedArticles = url =>
     getWithProxy(url)
       .then(({ data }) => parseRssFeed(data))
       .then(({ articles }) => {
-        state.rssFeeds[url].articles = {
+        state.articles = {
           ...articles,
-          ...state.rssFeeds[url].articles,
+          ...state.articles,
         };
       });
 
   const updateRssFeedsArticles = () => {
-    if (isEmpty(state.rssFeeds)) {
+    if (isEmpty(state.rssUrls)) {
       return Promise.resolve();
     }
 
-    const promises = keys(state.rssFeeds).map(updateRssFeedArticles);
+    const promises = state.rssUrls.map(updateRssFeedArticles);
     return Promise.all(promises);
   };
 
-  const getChannelsList = () => Object.values(state.rssFeeds);
+  const getChannelsList = () => state.channels;
 
-  const getArticlesList = () =>
-    Object.values(state.rssFeeds).reduce(
-      (acc, { articles }) => [...acc, ...Object.values(articles)],
-      [],
-    );
+  const getArticlesList = () => Object.values(state.articles);
 
-  const isDuplicatedUrl = url => Object.keys(state.rssFeeds).includes(url);
+  const isDuplicatedUrl = url => state.rssUrls.includes(url);
 
   const initBackgroundRssFeedsUpdating = () => {
     setTimeout(() => {
@@ -175,7 +175,8 @@ export default () => {
 
   document.addEventListener('click', ({ target }) => {
     if (target.classList.contains('js-show-article-modal-button')) {
-      const { description, link, title } = target.dataset;
+      const { id } = target.dataset;
+      const { description, link, title } = state.articles[id] || {};
       state.articleDescriptionModal = {
         description,
         link,
@@ -195,10 +196,13 @@ export default () => {
     formAlerts.innerHTML = formError ? getAlertHtml(formError) : '';
   });
 
-  watch(state, 'rssFeeds', () => {
-    const articles = getArticlesList();
+  watch(state, 'channels', () => {
     const channels = getChannelsList();
     channelsList.innerHTML = getChannelsListHtml(channels);
+  });
+
+  watch(state, 'articles', () => {
+    const articles = getArticlesList();
     articlesList.innerHTML = getArticlesListHtml(articles);
   });
 

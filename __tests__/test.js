@@ -31,6 +31,8 @@ const articlesListSelector = '.js-rss-articles-list';
 const channelsListSelector = '.js-rss-channels-list';
 const formAlertsSelector = '.js-form-alerts';
 const formSelector = '.js-rss-url-form';
+const showArticleModalButtonSelector = '.js-show-article-modal-button';
+const articleModalSelector = '#articleDescriptionModal';
 
 describe('rss reader', () => {
   nock.disableNetConnect();
@@ -223,5 +225,26 @@ describe('rss reader', () => {
         done();
       }, 100);
     });
+  });
+
+  test('should show popup with description', done => {
+    const url = 'https://good-url.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .reply(200, rssFeedHexletPart1);
+
+    pressKey('m', rssUrlInput, url);
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    setTimeout(() => {
+      document.querySelector(showArticleModalButtonSelector).click();
+    }, 100);
+    setTimeout(() => {
+      expect(
+        html(document.querySelector(articleModalSelector).outerHTML, htmlOptions),
+      ).toMatchSnapshot();
+      done();
+    }, 1000);
   });
 });

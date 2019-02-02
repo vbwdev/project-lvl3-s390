@@ -13,10 +13,12 @@ const parseRssFeed = data => {
     };
   }, {});
   return {
-    title: rssDom.querySelector('channel > title').textContent,
-    description: rssDom.querySelector('channel > description').textContent,
-    link: rssDom.querySelector('channel > link').textContent,
     articles,
+    channel: {
+      title: rssDom.querySelector('channel > title').textContent,
+      description: rssDom.querySelector('channel > description').textContent,
+      link: rssDom.querySelector('channel > link').textContent,
+    },
   };
 };
 
