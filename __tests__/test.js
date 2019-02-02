@@ -91,15 +91,22 @@ describe('rss reader', () => {
     }, 0);
   });
 
-  // should clear input after success data fetching
-  xtest('should clear input and disable button after form submitting', () => {
-    pressKey('m', rssUrlInput, 'test.com');
+  test('should clear input and disable button after form submitting', () => {
+    const url = 'test.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .reply(200, rssFeedHexletPart1);
+
+    pressKey('m', rssUrlInput, url);
     rssUrlForm.dispatchEvent(new Event('submit'));
-    expect(rssUrlInput.value).toBe('');
-    expect(rssUrlSubmitButton.disabled).toBe(true);
+
+    setTimeout(() => {
+      expect(rssUrlInput.value).toBe('');
+      expect(rssUrlSubmitButton.disabled).toBe(true);
+    }, 100);
   });
 
-  // should process data fetching
   test('should not add duplicated url', async done => {
     const url = 'https://test.com';
     nock(proxyUrl)
