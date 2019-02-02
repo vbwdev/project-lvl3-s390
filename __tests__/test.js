@@ -29,7 +29,7 @@ const pressKey = (key, el = document.body, value = key) => {
 const readFile = promisify(fs.readFile);
 
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-const nockHeaders = { 'access-control-allow-origin': '*' };
+const proxyHeaders = { 'access-control-allow-origin': '*' };
 const channelsListSelector = '.js-rss-channels-list';
 const articlesListSelector = '.js-rss-articles-list';
 
@@ -100,24 +100,36 @@ describe('rss reader', () => {
   });
 
   // should process data fetching
-  xtest('should not add duplicated url', done => {
-    pressKey('m', rssUrlInput, 'test.com');
+  test('should not add duplicated url', async done => {
+    const url = 'https://test.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .reply(200, rssFeedHexletPart1);
+    pressKey('m', rssUrlInput, url);
     rssUrlForm.dispatchEvent(new Event('submit'));
 
-    pressKey('m', rssUrlInput, 'test.com');
-    rssUrlForm.dispatchEvent(new Event('submit'));
-
-    setTimeout(() => {
-      expect(rssUrlInput.classList.contains('is-invalid')).toBe(true);
-      expect(rssUrlSubmitButton.disabled).toBe(true);
-      done();
-    }, 0);
+    await (() => {
+      return new Promise(resolve =>
+        setTimeout(() => {
+          pressKey('m', rssUrlInput, url);
+          rssUrlForm.dispatchEvent(new Event('submit'));
+          resolve();
+        }, 100),
+      );
+    })().then(() => {
+      setTimeout(() => {
+        expect(rssUrlInput.classList.contains('is-invalid')).toBe(true);
+        expect(rssUrlSubmitButton.disabled).toBe(true);
+        done();
+      }, 100);
+    });
   });
 
   test('should render channels and articles list', done => {
     const url = 'https://good-url.com';
     nock(proxyUrl)
-      .defaultReplyHeaders(nockHeaders)
+      .defaultReplyHeaders(proxyHeaders)
       .get(`/${url}`)
       .reply(200, rssFeedHexletPart1);
 
@@ -139,7 +151,7 @@ describe('rss reader', () => {
     const url = 'https://good-url.com';
     const url2 = 'https://other-good-url.com';
     nock(proxyUrl)
-      .defaultReplyHeaders(nockHeaders)
+      .defaultReplyHeaders(proxyHeaders)
       .get(`/${url}`)
       .twice()
       .reply(200, rssFeedHexletPart1)
