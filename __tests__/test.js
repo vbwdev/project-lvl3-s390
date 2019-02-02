@@ -5,8 +5,11 @@ import path from 'path';
 import { promisify } from 'util';
 import { html } from 'js-beautify';
 import keycode from 'keycode';
+import nock from 'nock';
 
 import init from '../src/init';
+
+nock.disableNetConnect();
 
 const htmlOptions = {
   indent_size: 2,
@@ -25,7 +28,24 @@ const pressKey = (key, el = document.body, value = key) => {
 
 const readFile = promisify(fs.readFile);
 
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+const proxyHeaders = { 'access-control-allow-origin': '*' };
+
+const articlesListSelector = '.js-rss-articles-list';
+const channelsListSelector = '.js-rss-channels-list';
+const formAlertsSelector = '.js-form-alerts';
+const formSelector = '.js-rss-url-form';
+
 describe('rss reader', () => {
+  const rssFeedHexletPart1 = fs.readFileSync(
+    `${__dirname}/__fixtures__/rss-feed-hexlet-part-1.txt`,
+    'utf8',
+  );
+  // const rssFeedHexletPart2 = fs.readFileSync(
+  //   `${__dirname}/__fixtures__/rss-feed-hexlet-part-2.txt`,
+  //   'utf8',
+  // );
+  const rssFeedLorem = fs.readFileSync(`${__dirname}/__fixtures__/rss-feed-lorem.txt`, 'utf8');
   let rssUrlForm;
   let rssUrlInput;
   let rssUrlSubmitButton;
@@ -74,26 +94,137 @@ describe('rss reader', () => {
     }, 0);
   });
 
-  // should clear input after success data fetching
-  xtest('should clear input and disable button after form submitting', () => {
-    pressKey('m', rssUrlInput, 'test.com');
-    rssUrlForm.dispatchEvent(new Event('submit'));
-    expect(rssUrlInput.value).toBe('');
-    expect(rssUrlSubmitButton.disabled).toBe(true);
-  });
+  test('should clear input and disable button after form submitting', done => {
+    const url = 'test.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .reply(200, rssFeedHexletPart1);
 
-  // should process data fetching
-  xtest('should not add duplicated url', done => {
-    pressKey('m', rssUrlInput, 'test.com');
-    rssUrlForm.dispatchEvent(new Event('submit'));
-
-    pressKey('m', rssUrlInput, 'test.com');
+    pressKey('m', rssUrlInput, url);
     rssUrlForm.dispatchEvent(new Event('submit'));
 
     setTimeout(() => {
-      expect(rssUrlInput.classList.contains('is-invalid')).toBe(true);
+      expect(rssUrlInput.value).toBe('');
       expect(rssUrlSubmitButton.disabled).toBe(true);
       done();
-    }, 0);
+    }, 100);
+  });
+
+  test('should not add duplicated url', async done => {
+    const url = 'https://test.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .reply(200, rssFeedHexletPart1);
+    pressKey('m', rssUrlInput, url);
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    await (() => {
+      return new Promise(resolve =>
+        setTimeout(() => {
+          pressKey('m', rssUrlInput, url);
+          rssUrlForm.dispatchEvent(new Event('submit'));
+          resolve();
+        }, 100),
+      );
+    })().then(() => {
+      setTimeout(() => {
+        expect(rssUrlInput.classList.contains('is-invalid')).toBe(true);
+        expect(rssUrlSubmitButton.disabled).toBe(true);
+        done();
+      }, 200);
+    });
+  });
+
+  test('should show loading state when fetching', done => {
+    const url = 'https://test.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .delay(1000)
+      .reply(500);
+
+    pressKey('m', rssUrlInput, url);
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    setTimeout(() => {
+      expect(html(document.querySelector(formSelector).innerHTML, htmlOptions)).toMatchSnapshot();
+      done();
+    }, 100);
+  });
+
+  test('should show error if loading failed', done => {
+    const url = 'https://test.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .reply(500);
+
+    pressKey('m', rssUrlInput, url);
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    setTimeout(() => {
+      expect(
+        html(document.querySelector(formAlertsSelector).innerHTML, htmlOptions),
+      ).toMatchSnapshot();
+      done();
+    }, 100);
+  });
+
+  test('should render channels and articles list', done => {
+    const url = 'https://good-url.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .reply(200, rssFeedHexletPart1);
+
+    pressKey('m', rssUrlInput, url);
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    setTimeout(() => {
+      expect(
+        html(document.querySelector(channelsListSelector).innerHTML, htmlOptions),
+      ).toMatchSnapshot();
+      expect(
+        html(document.querySelector(articlesListSelector).innerHTML, htmlOptions),
+      ).toMatchSnapshot();
+      done();
+    }, 100);
+  });
+
+  test('should render new channels and articles list', async done => {
+    const url = 'https://good-url.com';
+    const url2 = 'https://other-good-url.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .twice()
+      .reply(200, rssFeedHexletPart1)
+      .get(`/${url2}`)
+      .reply(200, rssFeedLorem);
+
+    pressKey('m', rssUrlInput, url);
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    await (() => {
+      return new Promise(resolve =>
+        setTimeout(() => {
+          pressKey('m', rssUrlInput, url2);
+          rssUrlForm.dispatchEvent(new Event('submit'));
+          resolve();
+        }, 100),
+      );
+    })().then(() => {
+      setTimeout(() => {
+        expect(
+          html(document.querySelector(channelsListSelector).innerHTML, htmlOptions),
+        ).toMatchSnapshot();
+        expect(
+          html(document.querySelector(articlesListSelector).innerHTML, htmlOptions),
+        ).toMatchSnapshot();
+        done();
+      }, 100);
+    });
   });
 });
