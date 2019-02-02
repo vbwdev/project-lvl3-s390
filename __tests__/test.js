@@ -28,7 +28,21 @@ const pressKey = (key, el = document.body, value = key) => {
 
 const readFile = promisify(fs.readFile);
 
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+const nockHeaders = { 'access-control-allow-origin': '*' };
+const channelsListSelector = '.js-rss-channels-list';
+const articlesListSelector = '.js-rss-articles-list';
+
 describe('rss reader', () => {
+  const rssFeedHexletPart1 = fs.readFileSync(
+    `${__dirname}/__fixtures__/rss-feed-hexlet-part-1.txt`,
+    'utf8',
+  );
+  // const rssFeedHexletPart2 = fs.readFileSync(
+  //   `${__dirname}/__fixtures__/rss-feed-hexlet-part-2.txt`,
+  //   'utf8',
+  // );
+  const rssFeedLorem = fs.readFileSync(`${__dirname}/__fixtures__/rss-feed-lorem.txt`, 'utf8');
   let rssUrlForm;
   let rssUrlInput;
   let rssUrlSubmitButton;
@@ -100,16 +114,59 @@ describe('rss reader', () => {
     }, 0);
   });
 
-  test('should render channels list', done => {
-    const rssUrl = 'https://cors-anywhere.herokuapp.com/http://localhost';
-    nock(rssUrl)
-      .get('/feed')
-      .reply(200, 'lol');
-    pressKey('m', rssUrlInput, 'http://localhost/feed');
+  test('should render channels and articles list', done => {
+    const url = 'https://good-url.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(nockHeaders)
+      .get(`/${url}`)
+      .reply(200, rssFeedHexletPart1);
+
+    pressKey('m', rssUrlInput, url);
     rssUrlForm.dispatchEvent(new Event('submit'));
+
     setTimeout(() => {
-      console.log(getTree());
+      expect(
+        html(document.querySelector(channelsListSelector).innerHTML, htmlOptions),
+      ).toMatchSnapshot();
+      expect(
+        html(document.querySelector(articlesListSelector).innerHTML, htmlOptions),
+      ).toMatchSnapshot();
       done();
-    }, 1000);
+    }, 100);
+  });
+
+  test('should render new channels and articles list', async done => {
+    const url = 'https://good-url.com';
+    const url2 = 'https://other-good-url.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(nockHeaders)
+      .get(`/${url}`)
+      .twice()
+      .reply(200, rssFeedHexletPart1)
+      .get(`/${url2}`)
+      .reply(200, rssFeedLorem);
+
+    pressKey('m', rssUrlInput, url);
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    await (() => {
+      return new Promise(resolve =>
+        setTimeout(() => {
+          pressKey('m', rssUrlInput, url2);
+          rssUrlForm.dispatchEvent(new Event('submit'));
+          resolve();
+        }, 100),
+      );
+    })().then(() => {
+      setTimeout(() => {
+        expect(
+          html(document.querySelector(channelsListSelector).innerHTML, htmlOptions),
+        ).toMatchSnapshot();
+        expect(
+          html(document.querySelector(articlesListSelector).innerHTML, htmlOptions),
+        ).toMatchSnapshot();
+        done();
+      }, 100);
+    });
   });
 });
