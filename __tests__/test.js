@@ -125,14 +125,14 @@ describe('rss reader', () => {
           pressKey('m', rssUrlInput, url);
           rssUrlForm.dispatchEvent(new Event('submit'));
           resolve();
-        }, 100),
+        }, 500),
       );
     })().then(() => {
       setTimeout(() => {
         expect(rssUrlInput.classList.contains('is-invalid')).toBe(true);
         expect(rssUrlSubmitButton.disabled).toBe(true);
         done();
-      }, 100);
+      }, 1000);
     });
   });
 
@@ -168,7 +168,7 @@ describe('rss reader', () => {
         html(document.querySelector(formAlertsSelector).innerHTML, htmlOptions),
       ).toMatchSnapshot();
       done();
-    }, 100);
+    }, 500);
   });
 
   test('should render channels and articles list', done => {
@@ -189,7 +189,7 @@ describe('rss reader', () => {
         html(document.querySelector(articlesListSelector).innerHTML, htmlOptions),
       ).toMatchSnapshot();
       done();
-    }, 100);
+    }, 500);
   });
 
   test('should render new channels and articles list', async done => {
