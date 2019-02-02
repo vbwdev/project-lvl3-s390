@@ -125,15 +125,14 @@ describe('rss reader', () => {
           pressKey('m', rssUrlInput, url);
           rssUrlForm.dispatchEvent(new Event('submit'));
           resolve();
-        }, 500),
+        }, 1000),
       );
     })().then(() => {
       setTimeout(() => {
-        console.log(getTree());
         expect(rssUrlInput.classList.contains('is-invalid')).toBe(true);
         expect(rssUrlSubmitButton.disabled).toBe(true);
         done();
-      }, 1000);
+      }, 2000);
     });
   });
 
@@ -169,7 +168,7 @@ describe('rss reader', () => {
         html(document.querySelector(formAlertsSelector).innerHTML, htmlOptions),
       ).toMatchSnapshot();
       done();
-    }, 500);
+    }, 1000);
   });
 
   test('should render channels and articles list', done => {
