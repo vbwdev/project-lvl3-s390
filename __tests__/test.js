@@ -94,7 +94,7 @@ describe('rss reader', () => {
     }, 0);
   });
 
-  test('should clear input and disable button after form submitting', () => {
+  test('should clear input and disable button after form submitting', done => {
     const url = 'test.com';
     nock(proxyUrl)
       .defaultReplyHeaders(proxyHeaders)
@@ -107,6 +107,7 @@ describe('rss reader', () => {
     setTimeout(() => {
       expect(rssUrlInput.value).toBe('');
       expect(rssUrlSubmitButton.disabled).toBe(true);
+      done();
     }, 100);
   });
 
