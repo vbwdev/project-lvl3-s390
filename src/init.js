@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import isUrl from 'validator/lib/isURL';
 import WatchJS from 'melanke-watchjs';
+import { isEmpty, keys } from 'lodash';
 
 import getAlertHtml from './components/alert';
 import getArticlesListHtml from './components/articlesList';
@@ -74,6 +75,7 @@ export default () => {
       link: null,
       title: null,
     },
+    isBackgroundRssFeedsUpdating: false,
   };
 
   const setUrlFormState = (stateName, values) => {
@@ -90,6 +92,25 @@ export default () => {
         };
       });
 
+  const updateRssFeedArticles = url =>
+    getWithProxy(url)
+      .then(({ data }) => parseRssFeed(data))
+      .then(({ articles }) => {
+        state.rssFeeds[url].articles = {
+          ...articles,
+          ...state.rssFeeds[url].articles,
+        };
+      });
+
+  const updateRssFeedsArticles = () => {
+    if (isEmpty(state.rssFeeds)) {
+      return Promise.resolve();
+    }
+
+    const promises = keys(state.rssFeeds).map(updateRssFeedArticles);
+    return Promise.all(promises);
+  };
+
   const getChannelsList = () => Object.values(state.rssFeeds);
 
   const getArticlesList = () =>
@@ -99,6 +120,12 @@ export default () => {
     );
 
   const isDuplicatedUrl = url => Object.keys(state.rssFeeds).includes(url);
+
+  const initBackgroundRssFeedsUpdating = () => {
+    setTimeout(() => {
+      updateRssFeedsArticles().finally(initBackgroundRssFeedsUpdating);
+    }, 5000);
+  };
 
   const rssUrlForm = document.querySelector('.js-rss-url-form');
   const rssUrlInput = document.querySelector('.js-rss-url-input');
@@ -136,6 +163,10 @@ export default () => {
     return addRssFeed(rssFeedUrl)
       .then(() => {
         setUrlFormState('empty');
+        if (!state.isBackgroundRssFeedsUpdating) {
+          initBackgroundRssFeedsUpdating();
+          state.isBackgroundRssFeedsUpdating = true;
+        }
       })
       .catch(error => {
         setUrlFormState('fetching-error', { error });

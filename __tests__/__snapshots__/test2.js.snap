@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rss reader should update articles by timeout 1`] = `
+"<li class=\\"list-group-item\\">
+  <h4>Новые уроки на Хекслете</h4>Практические уроки по программированию
+</li>"
+`;
+
+exports[`rss reader should update articles by timeout 2`] = `
+"<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/main/lessons/functional-contest-03-2015/theory_unit\\" target=\\"_blank\\">Ареалы проживания членистоногих. Конкурс по функциональному программированию 03.2015. / Главные испытания</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Получить сатисфакцию\\" data-link=\\"https://ru.hexlet.io/courses/main/lessons/functional-contest-03-2015/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Ареалы проживания членистоногих. Конкурс по функциональному программированию 03.2015. / Главные испытания\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/frameworks/lessons/rails_getting_started/theory_unit\\" target=\\"_blank\\">Rails для начинающих / Фреймворки</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться работать с фреймворком Rails\\" data-link=\\"https://ru.hexlet.io/courses/frameworks/lessons/rails_getting_started/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Rails для начинающих / Фреймворки\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/main/lessons/pipeline/theory_unit\\" target=\\"_blank\\">Pipeline challenge / Главные испытания</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Написать клиент, реализующий передачу сообщений в условиях канала передачи с помехами.\\" data-link=\\"https://ru.hexlet.io/courses/main/lessons/pipeline/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Pipeline challenge / Главные испытания\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/npx/theory_unit\\" target=\\"_blank\\">NPX / JS: Настройка окружения</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться запускать локально установленные пакеты-утилиты\\" data-link=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/npx/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"NPX / JS: Настройка окружения\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/dependencies/theory_unit\\" target=\\"_blank\\">Зависимости / JS: Настройка окружения</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Познакомиться с понятием \\" зависимости\\"=\\"\\" и=\\"\\" научиться=\\"\\" ими=\\"\\" пользоваться\\"=\\"\\" data-link=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/dependencies/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Зависимости / JS: Настройка окружения\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/publish/theory_unit\\" target=\\"_blank\\">Публикация пакета / JS: Настройка окружения</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Познакомиться с семантическим версионированием и публикацией пакета\\" data-link=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/publish/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Публикация пакета / JS: Настройка окружения\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/async-await/theory_unit\\" target=\\"_blank\\">Async/Await / JS: Асинхронное программирование</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Познакомиться с самым современным способом писать асинхронный код как синхронный\\" data-link=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/async-await/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Async/Await / JS: Асинхронное программирование\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/new-promise/theory_unit\\" target=\\"_blank\\">new Promise / JS: Асинхронное программирование</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться создавать промисы из колбеков\\" data-link=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/new-promise/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"new Promise / JS: Асинхронное программирование\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/promises-catch/theory_unit\\" target=\\"_blank\\">Обработка ошибок в промисах / JS: Асинхронное программирование</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться правильно обрабатывать ошибки в цепочках\\" data-link=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/promises-catch/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Обработка ошибок в промисах / JS: Асинхронное программирование\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/promise-all/theory_unit\\" target=\\"_blank\\">Promise.all / JS: Асинхронное программирование</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться выполнять промисы параллельно\\" data-link=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/promise-all/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Promise.all / JS: Асинхронное программирование\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>"
+`;
+
+exports[`rss reader should update articles by timeout 3`] = `
+"<li class=\\"list-group-item\\">
+  <h4>Новые уроки на Хекслете</h4>Практические уроки по программированию
+</li>"
+`;
+
+exports[`rss reader should update articles by timeout 4`] = `
+"<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/main/lessons/physics\\" target=\\"_blank\\">Почему эксперментально верифицируема суспензия?</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"В условиях электромагнитных помех, неизбежных при полевых измерениях, не всегда можно опредлить, когда именно излучение самопроизвольно.\\" data-link=\\"https://ru.hexlet.io/courses/main/lessons/physics\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Почему эксперментально верифицируема суспензия?\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/frameworks/lessons/rails_unit\\" target=\\"_blank\\">Ультрафиолетовый взрыв: зеркало или темная материя?</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Любое возмущение затухает, если струя едва ли квантуема. \\" data-link=\\"https://ru.hexlet.io/courses/frameworks/lessons/rails_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Ультрафиолетовый взрыв: зеркало или темная материя?\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/main/lessons/functional-contest-03-2015/theory_unit\\" target=\\"_blank\\">Ареалы проживания членистоногих. Конкурс по функциональному программированию 03.2015. / Главные испытания</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Получить сатисфакцию\\" data-link=\\"https://ru.hexlet.io/courses/main/lessons/functional-contest-03-2015/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Ареалы проживания членистоногих. Конкурс по функциональному программированию 03.2015. / Главные испытания\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/frameworks/lessons/rails_getting_started/theory_unit\\" target=\\"_blank\\">Rails для начинающих / Фреймворки</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться работать с фреймворком Rails\\" data-link=\\"https://ru.hexlet.io/courses/frameworks/lessons/rails_getting_started/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Rails для начинающих / Фреймворки\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/main/lessons/pipeline/theory_unit\\" target=\\"_blank\\">Pipeline challenge / Главные испытания</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Написать клиент, реализующий передачу сообщений в условиях канала передачи с помехами.\\" data-link=\\"https://ru.hexlet.io/courses/main/lessons/pipeline/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Pipeline challenge / Главные испытания\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/npx/theory_unit\\" target=\\"_blank\\">NPX / JS: Настройка окружения</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться запускать локально установленные пакеты-утилиты\\" data-link=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/npx/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"NPX / JS: Настройка окружения\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/dependencies/theory_unit\\" target=\\"_blank\\">Зависимости / JS: Настройка окружения</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Познакомиться с понятием \\" зависимости\\"=\\"\\" и=\\"\\" научиться=\\"\\" ими=\\"\\" пользоваться\\"=\\"\\" data-link=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/dependencies/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Зависимости / JS: Настройка окружения\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/publish/theory_unit\\" target=\\"_blank\\">Публикация пакета / JS: Настройка окружения</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Познакомиться с семантическим версионированием и публикацией пакета\\" data-link=\\"https://ru.hexlet.io/courses/js-setup-environment/lessons/publish/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Публикация пакета / JS: Настройка окружения\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/async-await/theory_unit\\" target=\\"_blank\\">Async/Await / JS: Асинхронное программирование</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Познакомиться с самым современным способом писать асинхронный код как синхронный\\" data-link=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/async-await/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Async/Await / JS: Асинхронное программирование\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/new-promise/theory_unit\\" target=\\"_blank\\">new Promise / JS: Асинхронное программирование</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться создавать промисы из колбеков\\" data-link=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/new-promise/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"new Promise / JS: Асинхронное программирование\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/promises-catch/theory_unit\\" target=\\"_blank\\">Обработка ошибок в промисах / JS: Асинхронное программирование</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться правильно обрабатывать ошибки в цепочках\\" data-link=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/promises-catch/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Обработка ошибок в промисах / JS: Асинхронное программирование\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>
+<div class=\\"list-group-item\\">
+  <h4><a class=\\"\\" href=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/promise-all/theory_unit\\" target=\\"_blank\\">Promise.all / JS: Асинхронное программирование</a></h4>
+  <button class=\\"js-show-article-modal-button btn btn-primary\\" data-description=\\"Цель: Научиться выполнять промисы параллельно\\" data-link=\\"https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/promise-all/theory_unit\\" data-target=\\"#articleDescriptionModal\\" data-title=\\"Promise.all / JS: Асинхронное программирование\\" data-toggle=\\"modal\\" type=\\"button\\"> More </button>
+</div>"
+`;
