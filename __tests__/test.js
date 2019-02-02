@@ -30,9 +30,11 @@ const readFile = promisify(fs.readFile);
 
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 const proxyHeaders = { 'access-control-allow-origin': '*' };
-const channelsListSelector = '.js-rss-channels-list';
+
 const articlesListSelector = '.js-rss-articles-list';
+const channelsListSelector = '.js-rss-channels-list';
 const formAlertsSelector = '.js-form-alerts';
+const formSelector = '.js-rss-url-form';
 
 describe('rss reader', () => {
   const rssFeedHexletPart1 = fs.readFileSync(
@@ -132,6 +134,23 @@ describe('rss reader', () => {
         done();
       }, 100);
     });
+  });
+
+  test('should show loading state when fetching', done => {
+    const url = 'https://test.com';
+    nock(proxyUrl)
+      .defaultReplyHeaders(proxyHeaders)
+      .get(`/${url}`)
+      .delay(1000)
+      .reply(500);
+
+    pressKey('m', rssUrlInput, url);
+    rssUrlForm.dispatchEvent(new Event('submit'));
+
+    setTimeout(() => {
+      expect(html(document.querySelector(formSelector).innerHTML, htmlOptions)).toMatchSnapshot();
+      done();
+    }, 100);
   });
 
   test('should show error if loading failed', done => {

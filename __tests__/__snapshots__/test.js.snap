@@ -195,3 +195,12 @@ exports[`rss reader should show error if loading failed 1`] = `
     <span aria-hidden=\\"true\\">×</span>
   </button> Error: Request failed with status code 500 </div>"
 `;
+
+exports[`rss reader should show loading state when fetching 1`] = `
+"<div class=\\"js-form-alerts\\"></div>
+<div class=\\"form-group\\">
+  <label for=\\"rss-url\\">RSS URL</label>
+  <input type=\\"text\\" class=\\"js-rss-url-input form-control\\" id=\\"rss-url\\" placeholder=\\"RSS URL\\" autocomplete=\\"off\\" value=\\"https://test.com\\">
+</div>
+<button type=\\"submit\\" class=\\"js-rss-url-submit-button btn btn-primary\\" disabled=\\"\\"><span class=\\"spinner-border spinner-border-sm\\" role=\\"status\\" aria-hidden=\\"true\\"></span></button>"
+`;
