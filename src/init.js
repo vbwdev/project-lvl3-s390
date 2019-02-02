@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import isUrl from 'validator/lib/isURL';
 import WatchJS from 'melanke-watchjs';
-import { isEmpty, keys } from 'lodash';
+import { isEmpty } from 'lodash';
 
 import getAlertHtml from './components/alert';
 import getArticlesListHtml from './components/articlesList';
