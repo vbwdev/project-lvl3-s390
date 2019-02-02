@@ -238,7 +238,7 @@ describe('rss reader', () => {
     rssUrlForm.dispatchEvent(new Event('submit'));
 
     setTimeout(() => {
-      document.querySelector(showArticleModalButtonSelector).click();;
+      document.querySelector(showArticleModalButtonSelector).click();
     }, 100);
     setTimeout(() => {
       expect(
