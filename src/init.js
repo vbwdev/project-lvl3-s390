@@ -7,7 +7,7 @@ import WatchJS from 'melanke-watchjs';
 import { isEmpty } from 'lodash';
 
 import getAlertHtml from './components/alert';
-import getArticlesListHtml from './components/articlesList';
+import getArticlesNodes from './components/articlesList';
 import getChannelsListHtml from './components/channelsList';
 import parseRssFeed from './parser';
 
@@ -127,6 +127,14 @@ export default () => {
     }, 5000);
   };
 
+  const updateModalContent = ({ description, link, title }) => {
+    state.articleDescriptionModal = {
+      description,
+      link,
+      title,
+    };
+  };
+
   const rssUrlForm = document.querySelector('.js-rss-url-form');
   const rssUrlInput = document.querySelector('.js-rss-url-input');
   const rssUrlSubmitButton = document.querySelector('.js-rss-url-submit-button');
@@ -173,18 +181,6 @@ export default () => {
       });
   });
 
-  document.addEventListener('click', ({ target }) => {
-    if (target.classList.contains('js-show-article-modal-button')) {
-      const { id } = target.dataset;
-      const { description, link, title } = state.articles[id] || {};
-      state.articleDescriptionModal = {
-        description,
-        link,
-        title,
-      };
-    }
-  });
-
   watch(state, 'addUrlForm', () => {
     const { canSubscribe, formError, hasUrlError, isFetching, urlInputValue } = state.addUrlForm;
     rssUrlInput.value = urlInputValue;
@@ -203,7 +199,9 @@ export default () => {
 
   watch(state, 'articles', () => {
     const articles = getArticlesList();
-    articlesList.innerHTML = getArticlesListHtml(articles);
+    const articlesNodes = getArticlesNodes(articles, updateModalContent);
+    articlesList.innerHTML = '';
+    articlesList.append(...articlesNodes);
   });
 
   watch(state, 'articleDescriptionModal', () => {
