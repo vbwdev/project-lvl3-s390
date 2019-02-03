@@ -1,29 +1,32 @@
-import getSpinnerHtml from './spinner';
+const getArticleNode = ({ description, link, title }, buttonClickHandler) => {
+  const linkElement = document.createElement('a');
+  linkElement.target = '_blank';
+  linkElement.href = link;
+  linkElement.textContent = title;
 
-const getArticlesListHtml = (articles, isLoading) => {
-  if (isLoading) {
-    return getSpinnerHtml();
-  }
-  if (articles.length === 0) {
-    return '<div class="list-group-item">No articles</div>';
-  }
-  const articlesHtml = articles.map(
-    ({ link, title }) => `
-      <div class="list-group-item">
-        <h4><a class="" href="${link}" target="_blank">${title}</a></h4>
-        <button
-          class="js-show-article-modal-button btn btn-primary"
-          data-id="${link}"
-          data-target="#articleDescriptionModal"
-          data-toggle="modal"
-          type="button"
-        >
-          More
-        </button>
-      </div>
-    `,
-  );
-  return articlesHtml.join('');
+  const titleElement = document.createElement('h4');
+  titleElement.append(linkElement);
+
+  const articleElement = document.createElement('div');
+  articleElement.classList.add('list-group-item');
+
+  const buttonElement = document.createElement('button');
+  buttonElement.type = 'button';
+  buttonElement.classList.add('btn', 'btn-primary', 'js-show-article-modal-button');
+  buttonElement.dataset.target = '#articleDescriptionModal';
+  buttonElement.dataset.toggle = 'modal';
+  buttonElement.textContent = 'More';
+  buttonElement.addEventListener('click', () => {
+    buttonClickHandler({ description, link, title });
+  });
+
+  articleElement.append(titleElement);
+  articleElement.append(buttonElement);
+  return articleElement;
 };
 
-export default getArticlesListHtml;
+const getArticlesNodes = (articles, buttonClickHandler) => {
+  return articles.map(article => getArticleNode(article, buttonClickHandler));
+};
+
+export default getArticlesNodes;
